@@ -1,0 +1,33 @@
+# === Node / React ===
+frontend/node_modules/
+frontend/dist/
+
+# === PHP / Composer ===
+backend/vendor/
+
+# === Environment files ===
+.env
+backend/.env
+frontend/.env
+
+# === Docker ===
+*.log
+docker-compose.override.yml
+**/.DS_Store
+
+# === Editor / System ===
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# === Dependency archives ===
+composer.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# === Build artifacts ===
+*.cache
+*.tmp
+
