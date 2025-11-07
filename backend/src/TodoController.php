@@ -34,8 +34,7 @@ class TodoController {
     }
 
     public function update($id, $body) {
-        $todo = $this->model->get($id);
-        if (!$todo) $this->json(['error'=>'Not found'], 404);
+        // Pass body directly to the model. Model handles partial updates.
         $updated = $this->model->update($id, $body);
         $this->json($updated);
     }
@@ -47,4 +46,3 @@ class TodoController {
         $this->json(['success' => true], 200);
     }
 }
-
