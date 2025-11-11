@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "rahees84/todo-devops-demo"
+        IMAGE_NAME = "raheesc/todo-devops-demo"
         IMAGE_TAG  = "latest"
     }
 
