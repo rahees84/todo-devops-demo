@@ -31,7 +31,7 @@ pipeline {
             )]) {
                 sh '''
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push rahees84/todo-devops-demo:latest
+                    docker push raheesc/todo-devops-demo:latest
                     docker logout
                 '''
             }
