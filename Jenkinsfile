@@ -20,6 +20,24 @@ pipeline {
                 sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
             }
         }
+
+        stage('Push to Docker Hub') {
+        steps {
+            echo '🚀 Pushing image to Docker Hub...'
+            withCredentials([usernamePassword(
+                credentialsId: 'docker-hub-creds',
+                usernameVariable: 'DOCKER_USER',
+                passwordVariable: 'DOCKER_PASS'
+            )]) {
+                sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push rahees84/todo-devops-demo:latest
+                    docker logout
+                '''
+            }
+        }
+    }
+
     }
 
     post {
