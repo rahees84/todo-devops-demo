@@ -17,6 +17,7 @@ spec:
       containers:
         - name: todo-frontend
           image: raheesc/todo-frontend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
           env:
