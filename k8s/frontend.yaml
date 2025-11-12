@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-frontend
+  labels:
+    app: todo-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-frontend
+  template:
+    metadata:
+      labels:
+        app: todo-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: node:22
+          command: ["sh", "-c", "cd /app && npm install && npm run build && npx serve -s dist -l 3000"]
+          workingDir: /app
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: frontend-src
+              mountPath: /app
+      volumes:
+        - name: frontend-src
+          hostPath:
+            # This mounts a local folder to cluster pod (only for local dev)
+            path: /Users/rahees/path/to/your/repo/frontend
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-frontend-service
+spec:
+  type: NodePort
+  selector:
+    app: todo-frontend
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30100

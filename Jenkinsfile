@@ -39,21 +39,16 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            steps {
-                echo '🚀 Deploying MySQL + PHP app to Kubernetes...'
-                sh '''
-                    # Apply MySQL secret
-                    kubectl apply -f k8s/mysql-secret.yaml
+  steps {
+    sh '''
+      kubectl apply -f k8s/mysql-secret.yaml
+      kubectl apply -f k8s/mysql.yaml
+      kubectl apply -f k8s/backend.yaml
+      kubectl apply -f k8s/frontend.yaml
+    '''
+  }
+}
 
-                    # Apply MySQL deployment & service
-                    kubectl apply -f k8s/mysql.yaml
-
-                    # Apply PHP deployment & service
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
-                '''
-            }
-        }
     }
 
     post {
