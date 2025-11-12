@@ -9,7 +9,7 @@ import TodoForm from "./components/TodoForm";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 const API_URL = `${API_BASE_URL}/todos`;
 
-  
+
 function App() {
   const [todos, setTodos] = useState([]);
 
@@ -70,7 +70,7 @@ function App() {
       {/* Main content wrapper — do not touch inner CSS */}
       <div style={{ flex: 1 }}>
         <div style={{ maxWidth: "500px", margin: "40px auto", textAlign: "center" }}>
-          <h1>📝 Todo App</h1>
+          <h1>📝 Todo App by RHS</h1>
           <TodoForm onAdd={addTodo} />
           <TodoList todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
         </div>
