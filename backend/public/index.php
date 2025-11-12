@@ -27,7 +27,7 @@ if ($method === 'OPTIONS') {
 $parts = array_values(array_filter(explode('/', $path)));
 
 if (count($parts) === 0) {
-    echo "Todo API";
+    echo "Todo API. V 1.0";
     exit;
 }
 
