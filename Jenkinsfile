@@ -62,7 +62,7 @@ pipeline {
 
             # Update frontend deployment with the new image
             kubectl set image deployment/todo-frontend \
-                todo-frontend=${IMAGE_NAME}:${IMAGE_TAG} \
+                todo-frontend=${FRONTEND_IMAGE}:${IMAGE_TAG} \
                 --record
             kubectl rollout status deployment todo-frontend
         """
