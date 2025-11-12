@@ -48,19 +48,27 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-            steps {
-                echo '🚀 Deploying to Kubernetes...'
-                sh '''
-                    kubectl apply -f k8s/mysql-storage.yaml || true
-                    kubectl apply -f k8s/mysql-secret.yaml || true
-                    kubectl create configmap mysql-initdb-config --from-file=sql/init.sql -o yaml --dry-run=client | kubectl apply -f -
+    steps {
+        echo '🚀 Deploying to Kubernetes...'
+        sh """
+            # Apply storage, secrets, and config first
+            kubectl apply -f k8s/mysql-storage.yaml || true
+            kubectl apply -f k8s/mysql-secret.yaml || true
+            kubectl create configmap mysql-initdb-config --from-file=sql/init.sql -o yaml --dry-run=client | kubectl apply -f -
 
-                    kubectl apply -f k8s/mysql-deployment.yaml
-                    kubectl apply -f k8s/backend.yaml
-                    kubectl apply -f k8s/frontend.yaml
-                '''
-            }
-        }
+            # Deploy MySQL and backend
+            kubectl apply -f k8s/mysql-deployment.yaml
+            kubectl apply -f k8s/backend.yaml
+
+            # Update frontend deployment with the new image
+            kubectl set image deployment/todo-frontend \
+                todo-frontend=${IMAGE_NAME}:${IMAGE_TAG} \
+                --record
+            kubectl rollout status deployment todo-frontend
+        """
+    }
+}
+
     }
 
     post {
