@@ -36,19 +36,16 @@ pipeline {
                 '''
             }
         }
-
-	stage('Deploy to Kubernetes') {
-    steps {
-        echo '🚀 Deploying to Kubernetes...'
-        sh '''
-            kubectl apply -f k8s/deployment.yaml
-            kubectl apply -f k8s/service.yaml
-        '''
-    }
-}
-
-    }
-
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                echo '🚀 Deploying to Kubernetes...'
+                sh '''
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+                '''
+            }
+        }
     }
 
     post {
