@@ -42,26 +42,21 @@ pipeline {
     steps {
         echo '🚀 Deploying to Kubernetes...'
         sh '''
-            # Apply storage, secrets & configmap first
+            # Apply storage, secrets, and config first
             kubectl apply -f k8s/mysql-storage.yaml || true
             kubectl apply -f k8s/mysql-secret.yaml || true
-            kubectl apply -f k8s/mysql-configmap.yaml || true
+            kubectl create configmap mysql-initdb-config --from-file=sql/init.sql -o yaml --dry-run=client | kubectl apply -f -
 
-            # Deploy MySQL database
+            # Deploy MySQL
             kubectl apply -f k8s/mysql-deployment.yaml
 
-            # Wait until MySQL pod is ready (max 2 minutes)
-            echo "⏳ Waiting for MySQL to be ready..."
-            kubectl rollout status statefulset/mysql --timeout=120s || true
-
-            # Deploy backend and frontend apps
+            # Deploy backend & frontend
             kubectl apply -f k8s/backend.yaml
             kubectl apply -f k8s/frontend.yaml
-
-            echo "✅ Deployment completed successfully!"
         '''
     }
 }
+
 
 
 
