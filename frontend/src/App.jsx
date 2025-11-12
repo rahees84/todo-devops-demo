@@ -70,7 +70,7 @@ function App() {
       {/* Main content wrapper — do not touch inner CSS */}
       <div style={{ flex: 1 }}>
         <div style={{ maxWidth: "500px", margin: "40px auto", textAlign: "center" }}>
-          <h1>📝 Todo App by V: 5</h1>
+          <h1>📝 Todo App by V: 6 : Weebhook</h1>
           <TodoForm onAdd={addTodo} />
           <TodoList todos={todos} onToggle={toggleTodo} onDelete={deleteTodo} />
         </div>
