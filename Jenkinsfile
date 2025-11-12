@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "raheesc/todo-devops-demo"
+        BACKEND_IMAGE = "raheesc/todo-devops-demo"
+        FRONTEND_IMAGE = "raheesc/todo-frontend"
         IMAGE_TAG  = "latest"
     }
 
@@ -14,16 +15,23 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Backend Image') {
             steps {
-                echo "🐳 Building Docker image..."
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                echo "🐳 Building backend Docker image..."
+                sh 'docker build -t $BACKEND_IMAGE:$IMAGE_TAG .'
             }
         }
 
-        stage('Push to Docker Hub') {
+        stage('Build Frontend Image') {
             steps {
-                echo '🚀 Pushing image to Docker Hub...'
+                echo "🎨 Building frontend Docker image..."
+                sh 'docker build -t $FRONTEND_IMAGE:$IMAGE_TAG ./frontend'
+            }
+        }
+
+        stage('Push Images to Docker Hub') {
+            steps {
+                echo '🚀 Pushing both images to Docker Hub...'
                 withCredentials([usernamePassword(
                     credentialsId: 'docker-hub-creds',
                     usernameVariable: 'DOCKER_USER',
@@ -31,7 +39,8 @@ pipeline {
                 )]) {
                     sh '''
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push $IMAGE_NAME:$IMAGE_TAG
+                        docker push $BACKEND_IMAGE:$IMAGE_TAG
+                        docker push $FRONTEND_IMAGE:$IMAGE_TAG
                         docker logout
                     '''
                 }
@@ -39,33 +48,24 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-    steps {
-        echo '🚀 Deploying to Kubernetes...'
-        sh '''
-            # Apply storage, secrets, and config first
-            kubectl apply -f k8s/mysql-storage.yaml || true
-            kubectl apply -f k8s/mysql-secret.yaml || true
-            kubectl create configmap mysql-initdb-config --from-file=sql/init.sql -o yaml --dry-run=client | kubectl apply -f -
+            steps {
+                echo '🚀 Deploying to Kubernetes...'
+                sh '''
+                    kubectl apply -f k8s/mysql-storage.yaml || true
+                    kubectl apply -f k8s/mysql-secret.yaml || true
+                    kubectl create configmap mysql-initdb-config --from-file=sql/init.sql -o yaml --dry-run=client | kubectl apply -f -
 
-            # Deploy MySQL
-            kubectl apply -f k8s/mysql-deployment.yaml
-
-            # Deploy backend & frontend
-            kubectl apply -f k8s/backend.yaml
-            kubectl apply -f k8s/frontend.yaml
-        '''
-    }
-}
-
-
-
-
-
+                    kubectl apply -f k8s/mysql-deployment.yaml
+                    kubectl apply -f k8s/backend.yaml
+                    kubectl apply -f k8s/frontend.yaml
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo "✅ Build and deployment completed successfully! Image: $IMAGE_NAME:$IMAGE_TAG"
+            echo "✅ Build and deployment completed successfully!"
         }
         failure {
             echo "❌ Build failed. Check logs above."
