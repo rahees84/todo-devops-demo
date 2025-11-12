@@ -4,7 +4,7 @@ pipeline {
     environment {
         BACKEND_IMAGE = "raheesc/todo-devops-demo"
         FRONTEND_IMAGE = "raheesc/todo-frontend"
-        IMAGE_TAG  = "latest"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {

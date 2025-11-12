@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: todo-frontend
-          image: raheesc/todo-frontend:latest
+          image: raheesc/todo-frontend:${BUILD_NUMBER}
           imagePullPolicy: Always
           ports:
             - containerPort: 80
