@@ -22,25 +22,33 @@ pipeline {
         }
 
         stage('Push to Docker Hub') {
-        steps {
-            echo '🚀 Pushing image to Docker Hub...'
-            withCredentials([usernamePassword(
-                credentialsId: 'docker-hub-creds',
-                usernameVariable: 'DOCKER_USER',
-                passwordVariable: 'DOCKER_PASS'
-            )]) {
-                sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push raheesc/todo-devops-demo:latest
-                    docker logout
-                '''
+            steps {
+                echo '🚀 Pushing image to Docker Hub...'
+                withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push $IMAGE_NAME:$IMAGE_TAG
+                        docker logout
+                    '''
+                }
             }
         }
-        }
+
         stage('Deploy to Kubernetes') {
             steps {
-                echo '🚀 Deploying to Kubernetes...'
+                echo '🚀 Deploying MySQL + PHP app to Kubernetes...'
                 sh '''
+                    # Apply MySQL secret
+                    kubectl apply -f k8s/mysql-secret.yaml
+
+                    # Apply MySQL deployment & service
+                    kubectl apply -f k8s/mysql.yaml
+
+                    # Apply PHP deployment & service
                     kubectl apply -f k8s/deployment.yaml
                     kubectl apply -f k8s/service.yaml
                 '''
@@ -50,7 +58,7 @@ pipeline {
 
     post {
         success {
-            echo "✅ Build completed successfully! Image: $IMAGE_NAME:$IMAGE_TAG"
+            echo "✅ Build and deployment completed successfully! Image: $IMAGE_NAME:$IMAGE_TAG"
         }
         failure {
             echo "❌ Build failed. Check logs above."

@@ -19,4 +19,24 @@ spec:
           image: raheesc/todo-devops-demo:latest
           ports:
             - containerPort: 80
-
+          env:
+            - name: DB_HOST
+              value: "mysql"       # Matches the MySQL service name
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: "todo_app"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: username
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: password
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command: ['sh', '-c', 'until nc -z mysql 3306; do echo "Waiting for MySQL..."; sleep 2; done;']
