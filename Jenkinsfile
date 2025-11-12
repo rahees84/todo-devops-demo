@@ -42,15 +42,20 @@ pipeline {
     steps {
         echo '🚀 Deploying to Kubernetes...'
         sh '''
+            # Apply storage & secrets first
             kubectl apply -f k8s/mysql-storage.yaml || true
+            kubectl apply -f k8s/mysql-secret.yaml || true
+
+            # Deploy MySQL database
             kubectl apply -f k8s/mysql-deployment.yaml
-            kubectl apply -f k8s/deployment.yaml
-            kubectl apply -f k8s/service.yaml
+
+            # Deploy backend and frontend apps
+            kubectl apply -f k8s/backend.yaml
             kubectl apply -f k8s/frontend.yaml
-            kubectl apply -f k8s/frontend-service.yaml
         '''
     }
 }
+
 
 
     }
