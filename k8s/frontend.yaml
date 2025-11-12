@@ -15,21 +15,10 @@ spec:
         app: todo-frontend
     spec:
       containers:
-        - name: frontend
-          image: node:22
-          command: ["sh", "-c", "cd /app && npm install && npm run build && npx serve -s dist -l 3000"]
-          workingDir: /app
+        - name: todo-frontend
+          image: raheesc/todo-frontend:latest   # <-- your built image
           ports:
-            - containerPort: 3000
-          volumeMounts:
-            - name: frontend-src
-              mountPath: /app
-      volumes:
-        - name: frontend-src
-          hostPath:
-            # This mounts a local folder to cluster pod (only for local dev)
-            path: /Users/rahees/path/to/your/repo/frontend
-            type: Directory
+            - containerPort: 5173
 ---
 apiVersion: v1
 kind: Service
@@ -40,6 +29,6 @@ spec:
   selector:
     app: todo-frontend
   ports:
-    - port: 3000
-      targetPort: 3000
-      nodePort: 30100
+    - port: 5173
+      targetPort: 5173
+      nodePort: 30517
