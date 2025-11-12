@@ -60,6 +60,12 @@ pipeline {
             kubectl apply -f k8s/mysql-deployment.yaml
             kubectl apply -f k8s/backend.yaml
 
+            # Update backend deployment with the new image
+            kubectl set image deployment/todo-app \
+                todo-app=${BACKEND_IMAGE}:${IMAGE_TAG} \
+                --record
+            kubectl rollout status deployment todo-app
+
             # Update frontend deployment with the new image
             kubectl set image deployment/todo-frontend \
                 todo-frontend=${FRONTEND_IMAGE}:${IMAGE_TAG} \

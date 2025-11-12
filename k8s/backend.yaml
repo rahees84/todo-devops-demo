@@ -31,7 +31,7 @@ spec:
               echo "mysql is reachable";
       containers:
         - name: todo-app
-          image: raheesc/todo-devops-demo:latest
+          image: raheesc/todo-devops-demo:${BUILD_NUMBER}
           imagePullPolicy: Always
           ports:
             - containerPort: 80
