@@ -39,15 +39,19 @@ pipeline {
         }
 
         stage('Deploy to Kubernetes') {
-  steps {
-    sh '''
-      kubectl apply -f k8s/mysql-secret.yaml
-      kubectl apply -f k8s/mysql.yaml
-      kubectl apply -f k8s/backend.yaml
-      kubectl apply -f k8s/frontend.yaml
-    '''
-  }
+    steps {
+        echo '🚀 Deploying to Kubernetes...'
+        sh '''
+            kubectl apply -f k8s/mysql-storage.yaml || true
+            kubectl apply -f k8s/mysql-deployment.yaml
+            kubectl apply -f k8s/deployment.yaml
+            kubectl apply -f k8s/service.yaml
+            kubectl apply -f k8s/frontend.yaml
+            kubectl apply -f k8s/frontend-service.yaml
+        '''
+    }
 }
+
 
     }
 
