@@ -16,9 +16,12 @@ spec:
     spec:
       containers:
         - name: todo-frontend
-          image: raheesc/todo-frontend:latest   # <-- your built image
+          image: raheesc/todo-frontend:latest  # ✅ your built image from Jenkins/Docker Hub
           ports:
             - containerPort: 5173
+          env:
+            - name: BACKEND_URL
+              value: "http://todo-app-service:80"  # internal service name for backend
 ---
 apiVersion: v1
 kind: Service
@@ -31,4 +34,4 @@ spec:
   ports:
     - port: 5173
       targetPort: 5173
-      nodePort: 30517
+      nodePort: 30517   # accessible via localhost:30517
