@@ -33,6 +33,6 @@ spec:
   selector:
     app: todo-frontend
   ports:
-    - port: 80          # ✅ Change this
-      targetPort: 80    # ✅ Change this
-      nodePort: 30517   # ✅ Keep this
+    - port: 80
+      targetPort: 80 
+      nodePort: 30517
